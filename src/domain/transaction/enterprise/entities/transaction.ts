@@ -1,11 +1,12 @@
 import { EntityBase } from "src/core/entities/entity-base"
 import { UniqueEntityId } from "src/core/entities/unique-entity-id"
+import { User } from "./user"
 
 export interface TransactionProps {
     id?: UniqueEntityId
     value: number
-    payerId: UniqueEntityId
-    payeeId: UniqueEntityId
+    payer: User
+    payee: User
     date: Date
 }
 
@@ -16,8 +17,8 @@ export class Transaction extends EntityBase<TransactionProps>{
     ) {
         return new Transaction({
             value: props.value,
-            payerId: props.payerId,
-            payeeId: props.payeeId,
+            payer: props.payer,
+            payee: props.payee,
             date: props.date,
         }, id)
     }

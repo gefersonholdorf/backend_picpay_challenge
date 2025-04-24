@@ -43,15 +43,16 @@ export class MakeTransactionUseCase {
             payee.receiveTransaction(value)
 
             const transaction = Transaction.create({
-                value, 
-                payerId: new UniqueEntityId(payerId), 
-                payeeId: new UniqueEntityId(payeeId), 
-                date
+                value, payer, payee, date
             })
 
-            await this.externalAuthorizationService.authorizationTransaction(transaction)
+            const resultAuthorization = await this.externalAuthorizationService.authorizationTransaction(transaction)
 
-            await this.userRepository.transaction(payer, payee)
+            if(!resultAuthorization.authorized) {
+                throw new Error('Unauthorized transaction')
+            }
+
+            await this.userRepository.transaction(transaction)
 
         } catch (error) {
             if(error instanceof Error) {

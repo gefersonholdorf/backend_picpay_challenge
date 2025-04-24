@@ -1,3 +1,4 @@
+import { Transaction } from "../../enterprise/entities/transaction";
 import { User } from "../../enterprise/entities/user";
 
 export abstract class UserRepository {
@@ -6,5 +7,5 @@ export abstract class UserRepository {
     abstract findByCpf(cpf: string): Promise<User | null>
     abstract findByEmail(email: string): Promise<User | null>
     abstract save(user: User): Promise<void>
-    abstract transaction(payer: User, payee: User): Promise<void>
+    abstract transaction(transaction: Transaction): Promise<void>
 }
