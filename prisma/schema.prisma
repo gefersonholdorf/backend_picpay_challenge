@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  COMUM
+  LOJISTA
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  cpf String @unique
+  password String
+  balance Decimal @db.Decimal(10, 2)
+
+  role Role
+
+  payer Transaction[] @relation(name: "payer_relation")
+  payee Transaction[] @relation(name: "payee_relation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+  payerId Int @map("payer_id")
+  payeeId Int @map("payee_id")
+
+  value Decimal @db.Decimal(10, 2)
+  date DateTime @default(now())
+
+  payer User @relation(name: "payer_relation", fields: [payerId], references: [id])
+  payee User @relation(name: "payee_relation", fields: [payeeId], references: [id])
+
+  @@index([payerId])
+  @@index([payeeId])
+
+  @@map("transactions")
+}
