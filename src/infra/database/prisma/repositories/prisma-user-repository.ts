@@ -3,7 +3,10 @@ import { Transaction } from "src/domain/transaction/enterprise/entities/transact
 import { User } from "src/domain/transaction/enterprise/entities/user";
 import { PrismaService } from "../prisma.service";
 import { PrismaUserMapper } from "../mappers/prisma-user-mapper";
+import { PrismaTransactionMapper } from "../mappers/prisma-transaction-mapper";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class PrismaUserRepository implements UserRepository{
     constructor(
         private readonly prisma: PrismaService
@@ -60,6 +63,32 @@ export class PrismaUserRepository implements UserRepository{
     }
 
     async transaction(transaction: Transaction): Promise<void> {
-        throw new Error("Method not implemented.");
+        const payerId = transaction.payer.id!.value
+        const payeeId = transaction.payee.id!.value
+
+        const payer = PrismaUserMapper.toPrisma(transaction.payer)
+        const payee = PrismaUserMapper.toPrisma(transaction.payee)
+
+        await this.prisma.$transaction(async(tx) => {
+            await tx.user.update({
+                data: payer,
+                where: {
+                    id: payerId
+                }
+            })
+
+            await tx.user.update({
+                data: payee,
+                where: {
+                    id: payeeId
+                }
+            })
+
+            const dataTransaction = PrismaTransactionMapper.toPrisma(transaction)
+
+            await tx.transaction.create({
+                data: dataTransaction
+            })
+        })
     }
 }

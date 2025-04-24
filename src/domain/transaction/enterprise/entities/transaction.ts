@@ -7,10 +7,27 @@ export interface TransactionProps {
     value: number
     payer: User
     payee: User
-    date: Date
+    date?: Date
 }
 
 export class Transaction extends EntityBase<TransactionProps>{
+
+    get value() {
+        return this.props.value
+    }
+
+    get date() {
+        return this.props.date
+    }
+
+    get payer() {
+        return this.props.payer
+    }
+
+    get payee() {
+        return this.props.payee
+    }
+
     static create(
         props: TransactionProps,
         id?: UniqueEntityId

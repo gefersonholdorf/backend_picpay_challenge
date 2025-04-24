@@ -4,17 +4,18 @@ import { ResourceNotFoundError } from "src/core/exceptions/errors/resource-not-f
 import { UserRepository } from "../repositories/user-repository"
 import { ExternalAuthorizationService } from "../services/external-authorization-service"
 import { Transaction } from "../../enterprise/entities/transaction"
-import { UniqueEntityId } from "src/core/entities/unique-entity-id"
+import { Injectable } from "@nestjs/common"
 
 export interface MakeTransactionUseCaseRequest {
     payerId: number
     payeeId: number
     value: number
-    date: Date
+    date?: Date
 }
 
 export type MakeTransactionUseCaseResponse = Either<ResourceNotFoundError | InvalidTransactionError, {}>
 
+@Injectable()
 export class MakeTransactionUseCase {
     constructor(
         private readonly userRepository: UserRepository,
