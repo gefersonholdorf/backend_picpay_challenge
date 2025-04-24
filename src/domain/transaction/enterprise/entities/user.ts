@@ -19,6 +19,23 @@ export class User extends EntityBase<UserProps> {
         return this.props.role
     }
 
+    get name() {
+        return this.props.name
+    }
+
+    get email() {
+        return this.props.email
+    }
+
+    get password() {
+        return this.props.password
+    }
+
+    get cpf() {
+        return this.props.cpf
+    }
+
+
     get balance() {
         return this.props.balance
     }
